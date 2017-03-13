@@ -18,7 +18,7 @@ ENV UPDATEONSTART 1
 # if the server is backup when start with docker start
 ENV BACKUPONSTART 1
 #  Tag on github for ark server tools
-ENV GIT_TAG v1.5
+ENV GIT_TAG v1.6.23
 # Server PORT (you can't remap with docker, it doesn't work)
 ENV SERVERPORT 27015
 # Steam port (you can't remap with docker, it doesn't work)
@@ -32,8 +32,8 @@ ENV UID 1000
 # GID of the user steam
 ENV GID 1000
 
-# Install dependencies 
-RUN apt-get update &&\ 
+# Install dependencies
+RUN apt-get update &&\
     apt-get install -y curl lib32gcc1 lsof git
 
 # Enable passwordless sudo for users under the "sudo" group
@@ -42,10 +42,10 @@ RUN sed -i.bkp -e \
 	/etc/sudoers
 
 # Run commands as the steam user
-RUN adduser \ 
-	--disabled-login \ 
-	--shell /bin/bash \ 
-	--gecos "" \ 
+RUN adduser \
+	--disabled-login \
+	--shell /bin/bash \
+	--gecos "" \
 	steam
 # Add to sudo group
 RUN usermod -a -G sudo steam
@@ -65,11 +65,11 @@ RUN mkdir  /ark
 # We use the git method, because api github has a limit ;)
 RUN  git clone https://github.com/FezVrasta/ark-server-tools.git /home/steam/ark-server-tools
 WORKDIR /home/steam/ark-server-tools/
-RUN  git checkout $GIT_TAG 
-# Install 
+RUN  git checkout $GIT_TAG
+# Install
 WORKDIR /home/steam/ark-server-tools/tools
-RUN chmod +x install.sh 
-RUN ./install.sh steam 
+RUN chmod +x install.sh
+RUN ./install.sh steam
 
 # Allow crontab to call arkmanager
 RUN ln -s /usr/local/bin/arkmanager /usr/bin/arkmanager
@@ -82,12 +82,12 @@ COPY instance.cfg /etc/arkmanager/instances/main.cfg
 
 RUN chown steam -R /ark && chmod 755 -R /ark
 
-#USER steam 
+#USER steam
 
 # download steamcmd
-RUN mkdir /home/steam/steamcmd &&\ 
-	cd /home/steam/steamcmd &&\ 
-	curl http://media.steampowered.com/installer/steamcmd_linux.tar.gz | tar -vxz 
+RUN mkdir /home/steam/steamcmd &&\
+	cd /home/steam/steamcmd &&\
+	curl http://media.steampowered.com/installer/steamcmd_linux.tar.gz | tar -vxz
 
 
 # First run is on anonymous to download the app
@@ -98,7 +98,7 @@ EXPOSE ${STEAMPORT} 32330 ${SERVERPORT}
 # Add UDP
 EXPOSE ${STEAMPORT}/udp ${SERVERPORT}/udp
 
-VOLUME  /ark 
+VOLUME  /ark
 
 # Change the working directory to /arkd
 WORKDIR /ark
